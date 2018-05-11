@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START imports]
 import os
 import urllib
 
@@ -28,9 +27,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
-# [END imports]
-
-DEFAULT_GUESTBOOK_NAME = 'default_guestbook'
 
 
 # We set a parent key on the 'Greetings' to ensure that they are all
@@ -38,32 +34,37 @@ DEFAULT_GUESTBOOK_NAME = 'default_guestbook'
 # will be consistent. However, the write rate should be limited to
 # ~1/second.
 
-def guestbook_key(guestbook_name=DEFAULT_GUESTBOOK_NAME):
-    """Constructs a Datastore key for a Guestbook entity.
+def reader_key(reader_id):
+    """Constructs a Datastore key for a Reader entity.
 
-    We use guestbook_name as the key.
+    We use reader_id as the key.
     """
-    return ndb.Key('Guestbook', guestbook_name)
+    return ndb.Key('Reader', reader_id)
 
 
-# [START greeting]
-class Author(ndb.Model):
-    """Sub model for representing an author."""
-    identity = ndb.StringProperty(indexed=False)
-    email = ndb.StringProperty(indexed=False)
+class ReaderEvent(ndb.Model):
+    """Sub model for representing a reader event."""
+    badge = ndb.StringProperty()
+    timestamp = ndb.DateTimeProperty()
 
 
-class Greeting(ndb.Model):
-    """A main model for representing an individual Guestbook entry."""
-    author = ndb.StructuredProperty(Author)
-    content = ndb.StringProperty(indexed=False)
-    date = ndb.DateTimeProperty(auto_now_add=True)
+class Person(ndb.Model):
+    """A main model for representing a person."""
+    first_name = ndb.StringProperty()
+    last_name = ndb.StringProperty()
+    email = ndb.StringProperty()
 
 
-# [END greeting]
+class BadgeAssignment(ndb.Model):
+    """Sub model for representing a badge assignment to a person.
+
+    A BadgeAssignment's ancestor is a Person.
+    """
+    rfid = ndb.StringProperty()
+    begin = ndb.DateTimeProperty()
+    end = ndb.DateTimeProperty()
 
 
-# [START main_page]
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
@@ -93,10 +94,6 @@ class MainPage(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
 
 
-# [END main_page]
-
-
-# [START guestbook]
 class Guestbook(webapp2.RequestHandler):
 
     def post(self):
@@ -121,12 +118,7 @@ class Guestbook(webapp2.RequestHandler):
         self.redirect('/?' + urllib.urlencode(query_params))
 
 
-# [END guestbook]
-
-
-# [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/sign', Guestbook),
 ], debug=True)
-# [END app]
