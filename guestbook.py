@@ -58,6 +58,8 @@ class Greeting(ndb.Model):
     author = ndb.StructuredProperty(Author)
     content = ndb.StringProperty(indexed=False)
     date = ndb.DateTimeProperty(auto_now_add=True)
+
+
 # [END greeting]
 
 
@@ -89,6 +91,8 @@ class MainPage(webapp2.RequestHandler):
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
+
+
 # [END main_page]
 
 
@@ -107,14 +111,16 @@ class Guestbook(webapp2.RequestHandler):
 
         if users.get_current_user():
             greeting.author = Author(
-                    identity=users.get_current_user().user_id(),
-                    email=users.get_current_user().email())
+                identity=users.get_current_user().user_id(),
+                email=users.get_current_user().email())
 
         greeting.content = self.request.get('content')
         greeting.put()
 
         query_params = {'guestbook_name': guestbook_name}
         self.redirect('/?' + urllib.urlencode(query_params))
+
+
 # [END guestbook]
 
 
