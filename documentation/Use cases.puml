@@ -1,0 +1,5 @@
+@startuml
+left to right direction
+:Tag Reader: as Reader
+Reader --> (Log tag seen)
+@enduml
