@@ -11,7 +11,7 @@ handlers:
   static_dir: bootstrap
 
 - url: /rest/.*
-  script: guestbook.app
+  script: rest.app
 
 - url: /.*
   script: guestbook.app
