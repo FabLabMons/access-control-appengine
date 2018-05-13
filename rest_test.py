@@ -14,36 +14,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from google.appengine.ext import ndb
+from google.appengine.ext import testbed
+import json
+import unittest
 import webtest
 
 import rest
 
 
-def post_reader_event():
-    app = webtest.TestApp(rest.app)
-    response = app.post('/rest/reader/123a456b/events')
-    return response
+class RestTest(unittest.TestCase):
+
+    def setUp(self):
+        self.testapp = webtest.TestApp(rest.app)
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+        self.testbed.init_datastore_v3_stub()
+        self.testbed.init_memcache_stub()
+        ndb.get_context().clear_cache()
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
+    def testLogTagHandler(self):
+        event_log = {
+            'timestamp': '2018-05-12T10:25:32Z',
+            'tag_id': '243F4AD56',
+            'signature': '9234E84CBA42'
+        }
+        event = json.dumps(event_log)
+
+        response = self.testapp.post('/rest/reader/123a456b/events', event)
+        self.assertEquals(201, response.status_int)
+        self.assertEquals('http://localhost/rest/reader/123a456b/events/1234', response.headers['Location'])
+        query = rest.TagEvent.query()
+        results = query.fetch(2)
+        self.assertEquals(1, len(results))
 
 
-def test_post_content_type():
-    response = post_reader_event()
-
-    assert response.content_type == 'application/json'
-
-
-def test_post_charset():
-    response = post_reader_event()
-
-    assert response.charset == 'utf-8'
-
-
-def test_post_status():
-    response = post_reader_event()
-
-    assert response.status_int == 201
-
-
-def test_post_location():
-    response = post_reader_event()
-
-    assert response.headers['Location'] == 'http://localhost/rest/reader/123a456b/events/1234'
+if __name__ == '__main__':
+    unittest.main()

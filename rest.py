@@ -15,22 +15,30 @@
 # limitations under the License.
 
 from google.appengine.ext import ndb
+import datetime
 
 import webapp2
-import ujson
+
+def tag_reader_key(reader_id):
+    return ndb.Key('Reader', reader_id)
+
+class TagEvent(ndb.Model):
+    tag_id = ndb.StringProperty()
+    timestamp = ndb.DateTimeProperty()
 
 
-class TagReadHandler(webapp2.RequestHandler):
+class LogTagHandler(webapp2.RequestHandler):
     def post(self, reader_id):
-        event_body = ujson.loads(self.request.body)
+        event_json = self.request.json
+        timestamp = datetime.datetime.strptime(event_json['timestamp'], r'%Y-%m-%dT%H:%M:%SZ')
+        event = TagEvent(tag_id=event_json['tag_id'], timestamp=timestamp, parent=tag_reader_key(reader_id))
+        event.put()
 
-
-        self.response.content_type = 'application/json; charset=utf-8'
         self.response.status_code = 201
         self.response.headers['Location'] = self.request.uri + '/' + '1234'
         self.response.write('Event logged')
 
 
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/rest/reader/<reader_id>/events', handler=TagReadHandler, name='tag_read')
+    webapp2.Route(r'/rest/reader/<reader_id>/events', handler=LogTagHandler, name='tag_read')
 ], debug=True)
