@@ -16,6 +16,7 @@
 
 from google.appengine.ext import ndb
 from google.appengine.ext import testbed
+import datetime
 import json
 import unittest
 import webtest
@@ -45,11 +46,16 @@ class RestTest(unittest.TestCase):
         event = json.dumps(event_log)
 
         response = self.testapp.post('/rest/reader/123a456b/events', event)
-        self.assertEquals(201, response.status_int)
-        self.assertEquals('http://localhost/rest/reader/123a456b/events/1234', response.headers['Location'])
+        self.assertEqual(201, response.status_int)
         query = rest.TagEvent.query()
         results = query.fetch(2)
-        self.assertEquals(1, len(results))
+        self.assertEqual(1, len(results))
+        self.assertEqual('Reader', results[0].key.parent().kind())
+        self.assertEqual('123a456b', results[0].key.parent().id())
+        self.assertEqual('243F4AD56', results[0].tag_id)
+        self.assertEqual(datetime.datetime(2018, 05, 12, 10, 25, 32), results[0].timestamp)
+        self.assertEqual('http://localhost/rest/reader/123a456b/events/{}'.format(results[0].key.id()),
+                         response.headers['Location'])
 
 
 if __name__ == '__main__':

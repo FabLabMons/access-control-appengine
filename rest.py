@@ -19,8 +19,10 @@ import datetime
 
 import webapp2
 
+
 def tag_reader_key(reader_id):
     return ndb.Key('Reader', reader_id)
+
 
 class TagEvent(ndb.Model):
     tag_id = ndb.StringProperty()
@@ -35,7 +37,7 @@ class LogTagHandler(webapp2.RequestHandler):
         event.put()
 
         self.response.status_code = 201
-        self.response.headers['Location'] = self.request.uri + '/' + '1234'
+        self.response.headers['Location'] = "{}/{}".format(self.request.uri, event.key.id())
         self.response.write('Event logged')
 
 
