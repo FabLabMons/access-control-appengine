@@ -1,4 +1,0 @@
-ujson
-webapp2
-webtest
-pytest
