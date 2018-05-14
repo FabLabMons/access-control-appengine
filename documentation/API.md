@@ -5,7 +5,6 @@
 Log a new event recorded through a tag reader.
 
 * Content-Type: application/json
-* Accept: application/json
 * Body:
 
   ```json(strict)
