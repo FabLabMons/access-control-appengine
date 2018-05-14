@@ -45,7 +45,7 @@ class RestTest(unittest.TestCase):
         }
         event = json.dumps(event_log)
 
-        response = self.testapp.post('/rest/reader/123a456b/events', event)
+        response = self.testapp.post('/rest/readers/123a456b/events', event)
         self.assertEqual(201, response.status_int)
         query = rest.TagEvent.query()
         results = query.fetch(2)
@@ -54,7 +54,7 @@ class RestTest(unittest.TestCase):
         self.assertEqual('123a456b', results[0].key.parent().id())
         self.assertEqual('243F4AD56', results[0].tag_id)
         self.assertEqual(localtimestamp, results[0].timestamp.timetuple())
-        self.assertEqual('http://localhost/rest/reader/123a456b/events/{}'.format(results[0].key.id()),
+        self.assertEqual('http://localhost/rest/readers/123a456b/events/{}'.format(results[0].key.id()),
                          response.headers['Location'])
 
 

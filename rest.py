@@ -43,5 +43,5 @@ class LogTagHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/rest/reader/<reader_id>/events', handler=LogTagHandler, name='tag_read')
+    webapp2.Route(r'/rest/readers/<reader_id>/events', handler=LogTagHandler, name='tag_read')
 ], debug=True)

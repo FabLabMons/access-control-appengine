@@ -1,6 +1,6 @@
 # REST API documentation
 
-## POST /rest/reader/:reader_id/events
+## POST /rest/readers/:reader_id/events
 
 Log a new event recorded through a tag reader.
 
