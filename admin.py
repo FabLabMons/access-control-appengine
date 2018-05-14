@@ -14,24 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime
+import jinja2
+import os
 import webapp2
 
-from model import tag_reader_key, TagEvent
+from model import TagEvent
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True
+)
 
 
-class LogEventHandler(webapp2.RequestHandler):
-    def post(self, reader_id):
-        event_json = self.request.json
-        timestamp = datetime.datetime.fromtimestamp(event_json['timestamp'], tz=None)
-        event = TagEvent(tag_id=event_json['tag_id'], timestamp=timestamp, parent=tag_reader_key(reader_id))
-        event.put()
-
-        self.response.status_int = 201
-        self.response.headers['Location'] = "{}/{}".format(self.request.uri, event.key.id())
-        self.response.write('Event logged')
+class DisplayEventsHandler(webapp2.RequestHandler):
+    def get(self):
+        events = TagEvent.query_last().fetch(20)
+        template_values = {
+            'events': events
+        }
+        template = JINJA_ENVIRONMENT.get_template('lastEvents.html')
+        self.response.write(template.render(template_values))
 
 
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/rest/readers/<reader_id>/events', handler=LogEventHandler, name='tag_read')
+    webapp2.Route(r'/admin/lastEvents', handler=DisplayEventsHandler, name='tag_read')
 ], debug=True)

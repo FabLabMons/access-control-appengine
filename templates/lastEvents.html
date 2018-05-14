@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Last logged events</title>
+</head>
+<body>
+<ol>
+    {% for event in events %}
+    <li>{{event.timestamp}}: {{event.tag_id}} (reader: {{event.key.parent().id()}})</li>
+    {% endfor %}
+</ol>
+</body>
+</html>

@@ -4,13 +4,13 @@
 # * 'gtrp' and 'gtr' create a GET request with or without query parameters;
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
-POST http://localhost:8080/rest/reader/1234/events
+POST http://localhost:8080/rest/readers/4567/events
 #POST https://access-control-203411.appspot.com/rest/reader/1234/events
 Content-Type: application/json
 
 {
-    "timestamp": 1526291678,
-    "tag_id": "243F4AD56",
+    "timestamp": 1526293679,
+    "tag_id": "243F4AD58",
     "signature": "9234E84CBA42"
 }
 

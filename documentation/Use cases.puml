@@ -1,5 +1,6 @@
 @startuml
 left to right direction
 :Tag Reader: as Reader
-Reader --> (Log tag seen)
+Reader --> (Log reading a tag)
+Admin --> (List the last 20 logged events)
 @enduml

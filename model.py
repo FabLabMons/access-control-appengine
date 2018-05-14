@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2016 Google Inc.
+# Copyright 2018 FabLabMons.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,25 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import uuid
-import os
-import requests
-
-URL = os.environ.get('GUESTBOOK_URL')
+from google.appengine.ext import ndb
 
 
-def test_e2e():
-    assert URL
-    print ("Running test against {}".format(URL))
-    r = requests.get(URL)
-    assert b'Guestbook' in r.content
-    u = uuid.uuid4()
-    data = {'content': str(u)}
-    r = requests.post(URL + '/sign', data)
-    assert r.status_code == 200
-    r = requests.get(URL)
-    assert str(u).encode('utf-8') in r.content
-    print("Success")
+def tag_reader_key(reader_id):
+    return ndb.Key('Reader', reader_id)
 
-if __name__ == "__main__":
-    test_e2e()
+
+class TagEvent(ndb.Model):
+    tag_id = ndb.StringProperty()
+    timestamp = ndb.DateTimeProperty()
+
+    @classmethod
+    def query_last(cls):
+        return cls.query().order(-cls.timestamp)
+
+
