@@ -16,6 +16,7 @@
 
 from google.appengine.ext import ndb
 import datetime
+import json
 
 import webapp2
 
@@ -36,7 +37,7 @@ class LogTagHandler(webapp2.RequestHandler):
         event = TagEvent(tag_id=event_json['tag_id'], timestamp=timestamp, parent=tag_reader_key(reader_id))
         event.put()
 
-        self.response.status_code = 201
+        self.response.status_int = 201
         self.response.headers['Location'] = "{}/{}".format(self.request.uri, event.key.id())
         self.response.write('Event logged')
 
