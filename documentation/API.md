@@ -10,14 +10,14 @@ Log a new event recorded through a tag reader.
 
   ```json(strict)
   {
-    "timestamp": "2018-05-12T10:25:32Z",
+    "timestamp": 1526291678,
     "tag_id": "243F4AD56",
     "signature": "9234E84CBA42"
   }
   ```
 
   * timestamp  
-  The timestamp event encoded as an [ISO-8601 timestamp](1).
+  The timestamp encoded as a [POSIX timestamp](1) (number of seconds since epoch).
   * tag_id  
   The ID of the RFID tag that was 
   * signature  
@@ -30,4 +30,4 @@ Log a new event recorded through a tag reader.
 * Header:
   * Location: a URI pointing to the created event
 
-[1]: https://en.wikipedia.org/wiki/ISO_8601
+[1]: https://en.wikipedia.org/wiki/Unix_time

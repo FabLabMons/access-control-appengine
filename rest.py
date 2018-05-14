@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.appengine.ext import ndb
 import datetime
 
 import webapp2
+from google.appengine.ext import ndb
 
 
 def tag_reader_key(reader_id):
@@ -32,7 +32,7 @@ class TagEvent(ndb.Model):
 class LogTagHandler(webapp2.RequestHandler):
     def post(self, reader_id):
         event_json = self.request.json
-        timestamp = datetime.datetime.strptime(event_json['timestamp'], r'%Y-%m-%dT%H:%M:%SZ')
+        timestamp = datetime.datetime.fromtimestamp(event_json['timestamp'], tz=None)
         event = TagEvent(tag_id=event_json['tag_id'], timestamp=timestamp, parent=tag_reader_key(reader_id))
         event.put()
 

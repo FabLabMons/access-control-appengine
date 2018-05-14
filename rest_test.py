@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.appengine.ext import ndb
-from google.appengine.ext import testbed
 import datetime
+import time
 import json
 import unittest
 import webtest
+from google.appengine.ext import testbed, ndb
 
 import rest
 
@@ -38,8 +38,9 @@ class RestTest(unittest.TestCase):
         self.testbed.deactivate()
 
     def testLogTagHandler(self):
+        localtimestamp = time.strptime(r'2018-05-14T13:19:17', '%Y-%m-%dT%H:%M:%S')
         event_log = {
-            'timestamp': '2018-05-12T10:25:32Z',
+            'timestamp': time.mktime(localtimestamp),
             'tag_id': '243F4AD56',
             'signature': '9234E84CBA42'
         }
@@ -53,7 +54,7 @@ class RestTest(unittest.TestCase):
         self.assertEqual('Reader', results[0].key.parent().kind())
         self.assertEqual('123a456b', results[0].key.parent().id())
         self.assertEqual('243F4AD56', results[0].tag_id)
-        self.assertEqual(datetime.datetime(2018, 05, 12, 10, 25, 32), results[0].timestamp)
+        self.assertEqual(localtimestamp, results[0].timestamp.timetuple())
         self.assertEqual('http://localhost/rest/reader/123a456b/events/{}'.format(results[0].key.id()),
                          response.headers['Location'])
 
