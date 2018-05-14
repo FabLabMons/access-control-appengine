@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from google.appengine.ext import ndb
 import datetime
 
 import webapp2
-from google.appengine.ext import ndb
 
 
 def tag_reader_key(reader_id):
