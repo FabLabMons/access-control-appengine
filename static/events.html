@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Last logged events</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+</head>
+<body>
+<h1>Last events logged</h1>
+<table id="events" class="display" style="width: 100%">
+    <thead>
+    <tr>
+        <th>Timestamp</th>
+        <th>Reader</th>
+        <th>Tag ID</th>
+    </tr>
+    </thead>
+</table>
+<script>
+    $(document).ready(function () {
+        const eventsTable = $('#events').DataTable({
+            ajax: "/rest/lastEvents",
+            paging: false,
+            searching: false,
+            columns: [
+                {"data": "timestamp"},
+                {"data": "reader"},
+                {"data": "tag_id"}
+            ]
+        });
+        setInterval(function () {
+            eventsTable.ajax.reload();
+        }, 10000);
+    });
+</script>
+</body>
+</html>

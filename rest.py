@@ -28,10 +28,26 @@ class LogEventHandler(webapp2.RequestHandler):
         event.put()
 
         self.response.status_int = 201
-        self.response.headers['Location'] = "{}/{}".format(self.request.uri, event.key.id())
+        self.response.location = "{}/{}".format(self.request.uri, event.key.id())
         self.response.write('Event logged')
 
 
+class LogEventDisplayHandler(webapp2.RequestHandler):
+    def get(self):
+        events = TagEvent.query_last().fetch(20)
+        stringified_events = map(lambda event: {
+            'tag_id': event.tag_id,
+            'timestamp': event.timestamp.isoformat(),
+            'reader': event.key.parent().id()
+        }, events)
+
+        self.response.status_int = 200
+        self.response.content_type = "application/json"
+        self.response.charset = "utf-8"
+        self.response.json = {'data': stringified_events}
+
+
 app = webapp2.WSGIApplication([
-    webapp2.Route(r'/rest/readers/<reader_id>/events', handler=LogEventHandler, name='tag_read')
+    webapp2.Route(r'/rest/readers/<reader_id>/events', handler=LogEventHandler, name='tag_read'),
+    webapp2.Route(r'/rest/lastEvents', handler=LogEventDisplayHandler, name='tag_read')
 ], debug=True)
