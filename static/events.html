@@ -18,9 +18,12 @@
     </tr>
     </thead>
 </table>
+<p>Last refreshed: <span id="lastRefreshed"></span></p>
 <script>
     $(document).ready(function () {
-        const eventsTable = $('#events').DataTable({
+        let eventsTable = $('#events');
+        let lastRefreshedSpan = $('#lastRefreshed');
+        const eventsDataTable = eventsTable.DataTable({
             ajax: "/rest/lastEvents",
             paging: false,
             searching: false,
@@ -30,9 +33,12 @@
                 {"data": "tag_id"}
             ]
         });
+        eventsTable.on('draw.dt', function () {
+            lastRefreshedSpan.text(new Date().toISOString());
+        });
         setInterval(function () {
-            eventsTable.ajax.reload();
-        }, 10000);
+            eventsDataTable.ajax.reload();
+        }, 2000);
     });
 </script>
 </body>
